@@ -8,8 +8,11 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "workspaces" :[
+  "workspaces": [
     "frontend",
     "backend"
-  ]
+  ],
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  }
 }

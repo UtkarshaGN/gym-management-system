@@ -1,5 +1,10 @@
+import dotenv from "dotenv";
+dotenv.config(); 
+
+
 import express from "express";
 import path from "path";
+
 import { SessionController } from "./controllers/SessionController.mjs";
 import { UserController } from "./controllers/UserController.mjs";
 import { LocationController} from "./controllers/LocationController.mjs";
