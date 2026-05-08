@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("partials/head.ejs") %>
+    <title>Weekly Calendar</title>
+    <style>
+      .sidebar-link.active {
+        font-weight: 600;
+color: #111827;
+      }
+      .date-picker-item.active {
+        background-color: #f97316;
+color: #ffffff;
+      }
+      .date-picker-item.active span {
+        color: #ffffff;
+}
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <%- include("partials/header.ejs") %>
+
+    <div>
+      <div class="lg:grid lg:grid-cols-[300px_1fr] lg:gap-8 min-h-screen">
+        <aside
+          class="mb-8 lg:mb-0 flex flex-col md:flex-row min-h-0 md:min-h-screen"
+        >
+          <% if (locals.authenticatedUser && locals.authenticatedUser.role ===
+          'member') { %> <%- include('partials/memberdashboard.ejs', { path:
+        
+  '/member/sessions' }) %> <% } else { %>
+          <p class="text-gray-600 p-4">
+            Please
+            <a href="/auth" class="text-orange-600 hover:underline">log in</a>
+            to book a session or manage your account.
+</p>
+          <% } %>
+        </aside>
+
+        <main>
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">Weekly Calendar</h2>
+          <% const days = ['SUN', 'MON', 'TUE', 'WED', 'THUR', 'FRI', 'SAT'];
+const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL',
+          'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+const toISODateString = (date) =>
+          date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) +
+          '-' + ('0' + date.getDate()).slice(-2);
+const today = new Date();
+
+          const selectedDateStr = locals.query && locals.query.date ?
+          locals.query.date : toISODateString(today);
+const queryParams = new
+          URLSearchParams(locals.query || {});
+%>
+
+          <div
+            class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3 mb-8 "
+          >
+            <% for(let i = 0; i < 7; i++) { %> <% const date = new Date();
+date.setDate(today.getDate() + i); const dateStr =
+            toISODateString(date); queryParams.set('date', dateStr);
+const link
+            = '/member/sessions?' + queryParams.toString();
+const isActive =
+            dateStr === selectedDateStr;
+%>
+            <a
+              href="<%= link %>"
+              class="date-picker-item text-center rounded-lg p-10 transition hover:bg-orange-300 <%= isActive ? 'active' : 'bg-orange-200' %>"
+            >
+              <span
+                class="text-xs font-bold <%= isActive 
+? 'text-white' : 'text-gray-600' %>"
+                ><%= days[date.getDay()] %></span>
+              <span
+                class="block text-2xl font-bold <%= isActive ? 'text-white' : 'text-gray-800' %>"
+                ><%= date.getDate() %></span>
+              <span
+       
+         class="text-xs font-bold <%= isActive ? 'text-white' : 'text-gray-600' %>"
+                ><%= months[date.getMonth()] %></span>
+            </a>
+            <% } %>
+          </div>
+
+          <div class="space-y-4">
+            <% if (sessions && sessions.length > 
+0) { %> <% for(let item of
+            sessions) { %>
+            <div
+              class="bg-white p-8 rounded-lg shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+            >
+              <div class="flex-grow">
+                <h3 
+class="text-lg font-bold text-gray-900">
+                  <%= item.activity.activityName %>
+                </h3>
+                <p class="text-sm text-gray-600">
+                  <%= item.activity.description %>
+                </p>
+        
+                <div class="text-sm text-gray-500 mt-2">
+                  <span>
+                    Time: <strong><%= item.session.startTime.substring(0, 5) %> - <%= item.session.endTime.substring(0, 5) %></strong> |
+                  </span>
+                  <span
+                    >Trainer:
+                    <strong><%= item.session.trainerName ||
+'N/A' %></strong>
+                    |</span
+                  >
+                  <span
+                    >Location:
+                    <strong><%= item.location.locationName %></strong></span
+ 
+                 >
+                </div>
+              </div>
+              <div class="w-full sm:w-auto">
+                
+                <%# Check if user is a logged-in member %>
+                <% if (locals.authenticatedUser && locals.authenticatedUser.role === 'member') { %>
+                  
+                  <%# Check if this session's ID is in the set of booked IDs %>
+                  <% if (bookedSessionIds.has(item.session.sessionId)) { %>
+                      
+                    <button disabled class="w-full text-gray-700 bg-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                        Booked
+                    </button>
+
+                  <% } else { %>
+                      
+                    <form action="/member/book-session/<%= item.session.sessionId %>" method="post">
+                        <button type="submit" class="w-full text-white bg-orange-500 hover:bg-orange-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition">
+                            Book Session
+                        </button>
+                    </form>
+
+                  <% } %>
+
+                <% } %>
+
+              </div>
+            </div>
+            <% } %> <% } else { %>
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+       
+       <p class="text-gray-600">
+                No sessions available for the selected criteria.
+</p>
+            </div>
+            <% } %>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <%- include("partials/footer.ejs") %>
+  </body>
+</html>

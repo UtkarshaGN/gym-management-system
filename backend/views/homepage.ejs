@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head.ejs") %>
+    <title>High Street Gym Blog</title>
+</head>
+<body class="bg-gray-50">
+
+    <%- include("partials/header.ejs") %>
+
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-3xl mx-auto">
+            <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">Gym Blog & News</h1>
+
+            <% if(posts && posts.length > 0) { %>
+                <div class="space-y-8">
+                    <% for(const item of posts) { %>
+                        <article class="bg-white p-6 rounded-lg shadow-md transition hover:shadow-lg">
+                            <h2 class="text-2xl font-bold text-gray-900 mb-2"><%= item.post.title %></h2>
+                            <div class="text-sm text-gray-500 mb-4">
+                                <span>
+                                    By <strong><%= item.user.firstName %> <%= item.user.lastName %></strong>
+                                </span>
+                                <span class="mx-2">|</span>
+                                <span>
+                                    <%= new Date(item.post.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                </span>
+                            </div>
+                            <p class="text-gray-700 leading-relaxed"><%= item.post.content %></p>
+                        </article>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <div class="text-center bg-white p-10 rounded-lg shadow-md">
+                    <p class="text-gray-500">No blog posts have been published yet. Check back soon!</p>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <%- include("partials/footer.ejs") %>
+
+</body>
+</html>

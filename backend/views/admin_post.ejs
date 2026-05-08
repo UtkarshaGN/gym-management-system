@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("partials/head.ejs") %>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Blogs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .sortable:hover {
+        cursor: pointer;
+        background-color: #f9fafb;
+      }
+      .sort-icon {
+        display: inline-block;
+        margin-left: 8px;
+        opacity: 0.6;
+      }
+      @media (max-width: 767px) {
+        #posts-table thead {
+          display: none;
+        }
+        #posts-table,
+        #posts-table tbody,
+        #posts-table tr {
+          display: block;
+          width: 100%;
+        }
+        #posts-table tr {
+          margin-bottom: 1rem;
+          border: 1px solid #e5e7eb;
+          border-radius: 0.5rem;
+          padding: 1rem;
+        }
+        #posts-table td {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.75rem 0.25rem;
+          border-bottom: 1px solid #f3f4f6;
+          text-align: right;
+        }
+        #posts-table tr:hover {
+          background-color: transparent;
+        }
+        #posts-table td:last-child {
+          border-bottom: none;
+        }
+        #posts-table td::before {
+          content: attr(data-label);
+          font-weight: 600;
+          text-align: left;
+          padding-right: 1rem;
+        }
+        #posts-table td p {
+          white-space: normal;
+          word-break: break-word;
+          max-width: 60%;
+        }
+        #posts-table td[data-label="Actions"] .flex {
+          justify-content: flex-end;
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <%- include("partials/header.ejs") %>
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+      <%- include("partials/admindashboard.ejs") %>
+
+      <main class="flex-1 p-4 md:p-8">
+        <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm">
+          <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"
+          >
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">
+              Manage Blogs
+            </h1>
+            <a
+              href="/post/add"
+              class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-lg shadow-md transition-transform transform hover:scale-105 flex items-center justify-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span>Add New Post</span>
+            </a>
+          </div>
+
+          <form action="/posts/manage" method="get" class="mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label for="author" class="block text-sm font-medium text-gray-700">Author</label>
+                <input type="text" name="author" id="author" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" value="<%= locals.query ? query.author || '' : '' %>">
+              </div>
+              <div>
+                <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+                <input type="text" name="title" id="title" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" value="<%= locals.query ? query.title || '' : '' %>">
+              </div>
+              <div>
+                <label for="content" class="block text-sm font-medium text-gray-700">Description</label>
+                <input type="text" name="content" id="content" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" value="<%= locals.query ? query.content || '' : '' %>">
+              </div>
+              <div>
+                <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+                <input type="date" name="date" id="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" value="<%= locals.query ? query.date || '' : '' %>">
+              </div>
+              <div class="flex items-end">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">Filter</button>
+              </div>
+            </div>
+          </form>
+
+          <div>
+            <table class="min-w-full leading-normal" id="posts-table">
+              <thead>
+                <tr>
+                  <th
+                    class="px-5 py-4 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  >
+                    <a
+                      href="/posts/manage?sortBy=author&order=asc"
+                      class="hover:text-blue-600"
+                      >Author <span class="sort-icon">▲</span></a
+                    >
+                  </th>
+                  <th
+                    class="px-5 py-4 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  >
+                    <a
+                      href="/posts/manage?sortBy=title&order=asc"
+                      class="hover:text-blue-600"
+                      >Title <span class="sort-icon">▲</span></a
+                    >
+                  </th>
+                  <th
+                    class="px-5 py-4 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  >
+                    Content
+                  </th>
+                  <th
+                    class="px-5 py-4 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  >
+                    <a
+                      href="/posts/manage?sortBy=createdAt&order=desc"
+                      class="hover:text-blue-600"
+                      >Created At <span class="sort-icon">▲</span></a
+                    >
+                  </th>
+                  <th
+                    class="px-5 py-4 border-b-2 border-gray-200 bg-gray-50 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if(posts && posts.length > 0) { %> <% for(const item of
+                posts) { %>
+                <tr class="hover:bg-gray-50 md:hover:bg-gray-50">
+                  <td
+                    data-label="Author"
+                    class="px-5 py-4 border-b border-gray-200 text-sm"
+                  >
+                    <p class="text-gray-900">
+                      <%= item.user.firstName %> <%= item.user.lastName %>
+                    </p>
+                  </td>
+                  <td
+                    data-label="Title"
+                    class="px-5 py-4 border-b border-gray-200 text-sm"
+                  >
+                    <p class="text-gray-900"><%= item.post.title %></p>
+                  </td>
+                  <td
+                    data-label="Content"
+                    class="px-5 py-4 border-b border-gray-200 text-sm"
+                  >
+                    <p class="text-gray-900 truncate md:max-w-sm">
+                      <%= item.post.content %>
+                    </p>
+                  </td>
+                  <td
+                    data-label="Created At"
+                    class="px-5 py-4 border-b border-gray-200 text-sm"
+                  >
+                    <p class="text-gray-900">
+                      <%= new Date(item.post.createdAt).toLocaleDateString() %>
+                    </p>
+                  </td>
+                  <td
+                    data-label="Actions"
+                    class="px-5 py-4 border-b border-gray-200 text-sm text-center"
+                  >
+                    <div class="flex item-center justify-center gap-4">
+                      <a
+                        href="/post/edit/<%= item.post.postId %>"
+                        class="p-1 text-blue-600 hover:text-blue-900 transition-colors"
+                      >
+                        <svg
+                          class="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"
+                          ></path>
+                        </svg>
+                      </a>
+                      <form
+                        action="/post/<%= item.post.postId %>"
+                        method="post"
+                        onsubmit="return confirm('Are you sure you want to delete this post?');"
+                      >
+                        <input type="hidden" name="action" value="delete" />
+                        <button
+                          type="submit"
+                          class="p-1 text-red-600 hover:text-red-900 transition-colors"
+                        >
+                          <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            ></path>
+                          </svg>
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+                <% } %> <% } else { %>
+                <tr>
+                  <td colspan="5" class="text-center py-10 text-gray-500">
+                    No posts found.
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

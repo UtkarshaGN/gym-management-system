@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("partials/head.ejs") %>
+    <title>Trainer Calendar</title>
+    <style>
+      .date-picker-item.active {
+        background-color: #f97316;
+        /* orange-500 */
+        color: #ffffff;
+      }
+      .date-picker-item.active span {
+        color: #ffffff;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <%- include("partials/header.ejs") %>
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+      <%- include("partials/trainerdashboard.ejs", { path: '/trainer/sessions'
+      }) %>
+
+      <main class="flex-1 p-6 md:p-8">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"
+        >
+          <h1 class="text-3xl font-bold text-gray-800">My Sessions</h1>
+          
+          <a
+            href="/trainer/sessions/add"
+            class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-lg shadow-md"
+          >
+            <span>Add Session</span>
+          </a>
+          
+        </div>
+              <form action="/trainer/sessions" method="get" class="mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div>
+                    <label
+                      for="activityName"
+                      class="block text-sm font-medium text-gray-700"
+                      >Activity Name</label
+                    >
+                    <input
+                      type="text"
+                      name="activityName"
+                      id="activityName"
+                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      for="locationName"
+                      class="block text-sm font-medium text-gray-700"
+                      >Location Name</label
+                    >
+                    <input
+                      type="text"
+                      name="locationName"
+                      id="locationName"
+                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      for="date"
+                      class="block text-sm font-medium text-gray-700"
+                      >Date</label
+                    >
+                    <input
+                      type="date"
+                      name="date"
+                      id="date"
+                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2"
+                    />
+                  </div>
+                  <div class="flex items-end">
+                    <button
+                      type="submit"
+                      class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 mb-2 px-4 rounded-lg shadow-md"
+                    >
+                      Filter
+                    </button>
+                  </div>
+                </div>
+              </form>
+        <% const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']; const
+        months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP',
+        'OCT', 'NOV', 'DEC']; const toISODateString = (date) =>
+        date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-'
+        + ('0' + date.getDate()).slice(-2); const today = new Date(); const
+        selectedDateStr = locals.query && locals.query.date ? locals.query.date
+        : toISODateString(today); const queryParams = new
+        URLSearchParams(locals.query || {}); const filteredSessions =
+        sessions.filter(s => s.sessionDate === selectedDateStr); %>
+
+        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-5 mb-8">
+          <% for(let i = 0; i < 7; i++) { %> <% const date = new Date();
+          date.setDate(today.getDate() + i); const dateStr =
+          toISODateString(date); queryParams.set('date', dateStr); const link =
+          '/trainer/sessions?' + queryParams.toString(); const isActive =
+          dateStr === selectedDateStr; %>
+          <a
+            href="<%= link %>"
+            class="date-picker-item text-center rounded-lg p-10 transition hover:bg-orange-300 <%= isActive ? 'active' : 'bg-orange-200' %>"
+          >
+            <span
+              class="text-xs font-bold <%= isActive ? '' : 'text-gray-600' %>"
+              ><%= days[date.getDay()] %></span
+            >
+            <span class="block text-2xl font-bold"><%= date.getDate() %></span>
+            <span
+              class="text-xs font-bold <%= isActive ? '' : 'text-gray-600' %>"
+              ><%= months[date.getMonth()] %></span
+            >
+          </a>
+          <% } %>
+        </div>
+
+        <div
+          class="bg-white rounded-2xl shadow-lg overflow-x-auto border border-gray-100 w-full"
+        >
+          <table class="min-w-full border-collapse">
+            <thead
+              class="sticky top-0 z-10 bg-gradient-to-r from-blue-50 to-blue-100"
+            >
+              <tr>
+                <th
+                  class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                >
+                  Session Name
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                >
+                  Time
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                >
+                  Bookings
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                >
+                  Location
+                </th>
+                <th
+                  class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                >
+                  Actions
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (filteredSessions && filteredSessions.length > 0) { %> <%
+              for (const session of filteredSessions) { %>
+              <tr
+                class="transition-all duration-200 hover:bg-blue-50 hover:shadow-sm"
+              >
+                <td
+                  class="px-6 py-4 border-b text-sm text-gray-800 font-medium"
+                >
+                  <%= session.activityName %>
+                </td>
+                <td class="px-6 py-4 border-b text-sm text-gray-700">
+                  <%= session.startTime.substring(0, 5) %> - <%=
+                  session.endTime.substring(0, 5) %>
+                </td>
+                <td class="px-6 py-4 border-b text-sm text-gray-700">
+                  <span
+                    class="inline-flex items-center justify-center px-2 py-1 text-xs font-semibold rounded-full <%= session.bookingCount >= 10 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700' %>"
+                  >
+                    <%= session.bookingCount %> / 10
+                  </span>
+                </td>
+                <td class="px-6 py-4 border-b text-sm text-gray-700">
+                  <%= session.locationName %>
+                </td>
+                <td class="px-6 py-4 border-b text-center">
+                  <div class="flex items-center justify-center gap-3">
+                    <a
+                      href="/trainer/sessions/edit/<%= session.sessionId %>"
+                      class="p-2 rounded-md hover:bg-blue-100 text-blue-600 hover:text-blue-800 transition"
+                    >
+                      <svg
+                        class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"
+                        ></path>
+                      </svg>
+                    </a>
+
+                    <form
+                      action="/trainer/sessions/<%= session.sessionId %>"
+                      method="post"
+                      onsubmit="return confirm('Are you sure?');"
+                    >
+                      <input type="hidden" name="action" value="delete" />
+                      <button
+                        type="submit"
+                        class=" mt-0 bg-transparent rounded-md hover:bg-red-100 text-red-600 hover:text-red-800 transition"
+                      >
+                        <svg
+                          class="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          ></path>
+                        </svg>
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+              <% } %> <% } else { %>
+              <tr>
+                <td colspan="5" class="text-center py-10 text-gray-500">
+                  No sessions scheduled for this day.
+                </td>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <%- include("partials/footer.ejs") %>
+  </body>
+</html>

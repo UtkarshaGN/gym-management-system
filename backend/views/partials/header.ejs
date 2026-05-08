@@ -1,0 +1,63 @@
+<header class="bg-gray-900 text-white shadow-md sticky top-0 z-20">
+    <div class="w-full flex justify-between items-center p-4 px-4 md:px-8">
+        <div class="logo">
+            <a href="/" class="text-2xl font-bold text-white hover:text-orange-500 transition">High Street Gym</a>
+        </div>
+
+        <nav class="hidden md:flex items-center space-x-6">
+            <% 
+            let sessionLink = "/member/sessions"; // Default for guests/members
+            if (locals.authenticatedUser) {
+                if (locals.authenticatedUser.role === 'admin') sessionLink = "/sessions";
+                if (locals.authenticatedUser.role === 'trainer') sessionLink = "/trainer/sessions";
+            }
+            %>
+            <a href="<%= sessionLink %>" class="hover:text-orange-500 transition">Sessions</a>
+            <a href="/blog" class="hover:text-orange-500 transition">Blog Page</a>
+            
+            <% if (locals.authenticatedUser) { %>
+                <a href="/auth/logout" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition">Log Out</a>
+            <% } else { %>
+                <a href="/auth" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-lg transition">Log In</a>
+            <% } %>
+        </nav>
+
+        <div class="md:hidden">
+            <button id="mobile-menu-button" class="text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div id="mobile-menu" class="md:hidden hidden bg-gray-900 p-4">
+        <nav class="flex flex-col space-y-4">
+             <% 
+            let mobileSessionLink = "/member/sessions"; // Default for guests/members
+            if (locals.authenticatedUser) {
+                if (locals.authenticatedUser.role === 'admin') mobileSessionLink = "/sessions";
+                if (locals.authenticatedUser.role === 'trainer') mobileSessionLink = "/trainer/sessions";
+            }
+            %>
+            <a href="<%= mobileSessionLink %>" class="hover:text-orange-500 transition">Sessions</a>
+            <a href="/blog" class="hover:text-orange-500 transition">Blog Page</a>
+            
+            <% if (locals.authenticatedUser) { %>
+                <a href="/auth/logout" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition text-center">Log Out</a>
+            <% } else { %>
+                <a href="/auth" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-lg transition text-center">Log In</a>
+            <% } %>
+        </nav>
+    </div>
+</header>
+
+<script>
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenuButton) {
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+</script>

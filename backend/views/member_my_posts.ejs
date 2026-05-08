@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("partials/head.ejs") %>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Blog Posts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <%- include("partials/header.ejs") %>
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+      <%- include("partials/memberdashboard.ejs", { path: locals.path }) %>
+
+      <main class="flex-1 p-4 md:p-8">
+        <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm">
+          <div class="grid grid-cols-1 lg:grid-cols-5 gap-16">
+            <div class="lg:col-span-3">
+              <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">
+                Create a New Blog Post
+              </h1>
+              <form action="/member/my-posts" method="post" class="space-y-6">
+                <div>
+                  <label
+                    for="title"
+                    class="block text-sm font-medium text-gray-700 mb-1"
+                    >Title</label
+                  >
+                  <input
+                    type="text"
+                    name="title"
+                    id="title"
+                    required
+                    placeholder="My first week at the gym..."
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="content"
+                    class="block text-sm font-medium text-gray-700 mb-1"
+                    >Content</label
+                  >
+                  <textarea
+                    name="content"
+                    id="content"
+                    rows="5"
+                    required
+                    placeholder="Tell us about your progress, challenges, and successes..."
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3"
+                  ></textarea>
+                </div>
+                <div class="flex justify-end">
+                  <button
+                    type="submit"
+                    name="action"
+                    value="create"
+                    class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105"
+                  >
+                    Post
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div class="lg:col-span-2">
+              <div
+                class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"
+              >
+                <h2 class="text-2xl font-bold text-gray-800">Your Posts</h2>
+                <div class="flex items-center gap-2 text-sm">
+                  <span class="text-gray-600">Sort by:</span>
+                  <a
+                    href="/member/my-posts?sortBy=createdAt&order=desc"
+                    class="bg-gray-200 text-gray-800 font-semibold py-1 px-3 rounded-full hover:bg-blue-600 hover:text-white"
+                    >Date</a
+                  >
+                  <a
+                    href="/member/my-posts?sortBy=title&order=asc"
+                    class="bg-gray-200 text-gray-800 font-semibold py-1 px-3 rounded-full hover:bg-blue-600 hover:text-white"
+                    >Title</a
+                  >
+                </div>
+              </div>
+              <div
+                id="posts-container"
+                class="space-y-4 max-h-[65vh] overflow-y-auto pr-2"
+              >
+                <% if(posts && posts.length > 0) { %> <% for(const post of
+                posts) { %>
+                <div
+                  class="post-item bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-start border border-gray-200"
+                >
+                  <div class="flex-1">
+                    <h3 class="font-bold text-gray-800"><%= post.title %></h3>
+                    <p class="text-sm text-gray-600 mt-1">
+                      <%= post.content.substring(0, 80) %>...
+                    </p>
+                    <p class="text-xs text-gray-400 mt-2">
+                      <%= new Date(post.createdAt).toLocaleString() %>
+                    </p>
+                  </div>
+                  <form
+                    action="/member/my-posts/delete/<%= post.postId %>"
+                    method="post"
+                    onsubmit="return confirm('Delete this post?');"
+                    class="ml-4"
+                  >
+                    <input type="hidden" name="action" value="delete" />
+                    <button
+                      type="submit"
+                      class="p-1 text-red-500 hover:text-red-700 hover:bg-red-100 rounded-full transition-colors"
+                    >
+                      <svg
+                        class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        ></path>
+                      </svg>
+                    </button>
+                  </form>
+                </div>
+                <% } %> <% } else { %>
+                <p class="text-gray-500 text-center mt-10">
+                  You haven't created any posts yet.
+                </p>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <%- include("partials/footer.ejs") %>
+  </body>
+</html>

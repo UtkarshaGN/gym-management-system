@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<h2>Manage Blog Posts</h2>
+
+<!-- List all posts with delete button -->
+<section>
+    <% for(const post of posts) { %>
+        <div>
+            <h3><%= post.title %></h3>
+            <p><%= post.content %></p>
+            <form action="/posts/manage" method="post" style="display:inline;">
+                <input type="hidden" name="postId" value="<%= post.postId %>">
+                <button type="submit" name="action" value="delete">Delete</button>
+            </form>
+        </div>
+    <% } %>
+</section>
+
+<hr>
+
+<!-- Create new post form -->
+<form action="/posts/manage" method="post">
+   
+    <label>Title:</label>
+    <input type="text" name="title" required>
+    <label>Content:</label>
+    <textarea name="content" required></textarea>
+    <button type="submit" name="action" value="create">Create Post</button>
+</form>
+
+
+
+</body>
+</html>

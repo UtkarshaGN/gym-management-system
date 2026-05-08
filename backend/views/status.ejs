@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head.ejs") %>
+    <title>Status</title>
+</head>
+<body class="bg-gray-50">
+    <%- include("partials/header.ejs") %>
+
+    <div class="flex flex-col md:flex-row">
+        <% if (locals.authenticatedUser) { %>
+            <% if (locals.authenticatedUser.role === 'admin') { %>
+                <%- include("partials/admindashboard.ejs", { path: '' }) %>
+            <% } else if (locals.authenticatedUser.role === 'trainer') { %>
+                <%- include("partials/trainerdashboard.ejs", { path: '' }) %>
+            <% } else if (locals.authenticatedUser.role === 'member') { %>
+                <%- include("partials/memberdashboard.ejs", { path: '' }) %>
+            <% } %>
+        <% } %>
+
+        <main class="flex-1 py-4 px-0 md:p-8 flex items-center justify-center">
+            <div class="bg-white p-12 rounded-lg shadow-lg text-center">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4"><%= status %></h2>
+                <% if (typeof message != "undefined") { %>
+                <p class="text-gray-600"><%= message %></p>
+                <% } %>
+                
+                <% if (locals.authenticatedUser) { %>
+                    <% if (locals.authenticatedUser.role === 'member') { %>
+                        <a href="/member/my-sessions" class="mt-6 inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-lg transition">Go to My Sessions</a>
+                    <% } %>
+                <% } %>
+            </div>
+        </main>
+    </div>
+
+    <%- include("partials/footer.ejs") %>
+</body>
+</html>
