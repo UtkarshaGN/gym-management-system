@@ -5,10 +5,10 @@ static connection
 
 static{
     this.connection = mysql.createPool({
-        host: "localhost",
-        user: "gym",
-        password: "Gym@2025",
-        database: "gymdata",
+        host: "",
+        user: "",
+        password: "",
+        database: "",
         nestTables: true,
         dateStrings: true, 
     })
