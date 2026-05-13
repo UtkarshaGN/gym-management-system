@@ -24,6 +24,11 @@ cors
 HTML
 EJS
 Tailwind CSS
+
+
+
+Screenshots:
+
 <img width="1909" height="826" alt="image" src="https://github.com/user-attachments/assets/99cf5e5e-597b-487d-9ccf-fccbf10b2a50" />
 <img width="1878" height="848" alt="image" src="https://github.com/user-attachments/assets/b038785e-e0ad-4afb-81e7-8eae2ed81961" />
 <img width="1914" height="765" alt="image" src="https://github.com/user-attachments/assets/9304d4f3-f556-41a1-9920-549f7c3ed5aa" />
